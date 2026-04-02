@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# PowerShell execution policy bypass scripts (generated locally)
+*.ps1.bak
