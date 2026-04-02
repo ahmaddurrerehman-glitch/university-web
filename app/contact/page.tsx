@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer'
 import { contactSchema, type ContactFormData } from '@/lib/validations'
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import PageHero from '@/components/layout/PageHero'
 
 const contactInfo = [
   { icon: MapPin, label: 'Address', value: 'CIMS Multan , Multan Cantt', color: '#3E92CC' },
@@ -30,11 +31,20 @@ export default function ContactPage() {
   })
 
   const onSubmit = async (data: ContactFormData) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    console.log('Contact form submitted:', data)
-    setSubmitted(true)
-    reset()
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('Failed to send')
+      setSubmitted(true)
+      reset()
+    } catch {
+      // Show generic error — do not expose details
+      reset()
+      setSubmitted(false)
+    }
   }
 
   return (
@@ -42,20 +52,18 @@ export default function ContactPage() {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-16 overflow-hidden">
-          <div className="absolute inset-0 hero-glow" />
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <PageHero minHeight="0" className="pt-32 pb-16">
+          <div className="max-w-7xl mx-auto px-6 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                Get in <span className="gradient-text-gold">Touch</span>
+                Get in <span className="gradient-text-crimson">Touch</span>
               </h1>
               <p className="text-xl text-slate-400 max-w-2xl mx-auto">
                 We'd love to hear from you. Our team is available to answer your questions and guide your journey to CIMS.
               </p>
             </motion.div>
           </div>
-        </section>
+        </PageHero>
 
         <section className="section-padding">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-5 gap-12">

@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import CTABanner from '@/components/sections/CTABanner'
 import { Award, Target, Eye, Heart, Users, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import PageHero from '@/components/layout/PageHero'
 
 const values = [
   { icon: Award, title: 'Excellence', description: 'We hold ourselves to the highest standards in teaching, research, and service to society.', color: '#D4AF37' },
@@ -22,7 +23,7 @@ const leadership = [
     image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=face',
   },
   {
-    name: 'Dr. ABdul Rafay',
+    name: 'Dr. Abdul Rafay',
     role: 'Provost & Academic VP',
     bio: 'Harvard, MIT. Expert in academic policy and curriculum excellence.',
     image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&crop=face',
@@ -56,10 +57,8 @@ export default function AboutPage() {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative min-h-[60vh] flex items-center pt-24 pb-16 overflow-hidden">
-          <div className="absolute inset-0 hero-glow" />
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <PageHero minHeight="60vh" className="pt-24 pb-16">
+          <div className="max-w-7xl mx-auto px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -77,7 +76,7 @@ export default function AboutPage() {
               </p>
             </motion.div>
           </div>
-        </section>
+        </PageHero>
 
         {/* Mission & Vision */}
         <section id="mission" className="section-padding">

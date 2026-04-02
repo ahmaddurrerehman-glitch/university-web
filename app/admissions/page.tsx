@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { CheckCircle, Clock, FileText, CreditCard, Users, Award, ArrowRight, Calendar } from 'lucide-react'
 import Link from 'next/link'
+import PageHero from '@/components/layout/PageHero'
 
 const steps = [
   { step: '01', icon: FileText, title: 'Choose Your Program', description: 'Browse our 180+ programs across 8 departments and select the one that aligns with your passions and career goals.' },
@@ -53,16 +54,14 @@ export default function AdmissionsPage() {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-20 overflow-hidden">
-          <div className="absolute inset-0 hero-glow" />
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <PageHero minHeight="0" className="pt-32 pb-20">
+          <div className="max-w-7xl mx-auto px-6 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-gold border border-gold/20 text-gold text-xs font-semibold uppercase tracking-wider mb-6">
                 <Calendar className="w-3.5 h-3.5" /> Applications Open — MBBS C'11
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                Start Your <span className="gradient-text-gold">CIMS</span> Journey
+                Start Your <span className="gradient-text-crimson">CIMS</span> Journey
               </h1>
               <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-8">
                 Your application is the first step toward an extraordinary education.
@@ -70,14 +69,14 @@ export default function AdmissionsPage() {
               </p>
               <Link
                 href="/register"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-white font-semibold text-base"
-                style={{ background: 'linear-gradient(135deg, #3E92CC, #0A2463)', boxShadow: '0 8px 32px rgba(62,146,204,0.35)' }}
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-white font-semibold text-base glow-pulse-crimson hover:scale-105 transition-all duration-300"
+                style={{ background: 'linear-gradient(135deg, #8B0000, #DC143C)' }}
               >
                 Begin Application <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
-        </section>
+        </PageHero>
 
         {/* Application Steps */}
         <section className="section-padding">

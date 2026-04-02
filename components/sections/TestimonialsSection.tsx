@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Star, Quote } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SpotlightCard from '@/components/ui/SpotlightCard'
 import Image from 'next/image'
 
 const testimonials = [
@@ -60,8 +61,8 @@ export default function TestimonialsSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={{ y: -4 }}
-              className="glass-card rounded-2xl p-8 border border-white/[0.06] hover:border-white/12 transition-all duration-300 relative"
             >
+              <SpotlightCard className="glass-card rounded-2xl p-8 border border-white/6 hover:border-white/12 transition-all duration-300 relative">
               <Quote
                 className="absolute top-6 right-6 w-10 h-10 text-accent/10"
                 strokeWidth={1}
@@ -90,6 +91,7 @@ export default function TestimonialsSection() {
                   <div className="text-slate-400 text-xs mt-0.5">{t.program} · {t.year}</div>
                 </div>
               </div>
+              </SpotlightCard>
             </motion.div>
           ))}
         </div>

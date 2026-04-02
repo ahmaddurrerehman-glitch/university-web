@@ -7,6 +7,9 @@
   --color-accent-light: #60aee0;
   --color-gold: #D4AF37;
   --color-gold-light: #f0c040;
+  --color-crimson: #DC143C;
+  --color-crimson-light: #FF4560;
+  --color-crimson-dark: #8B0000;
   --color-dark: #060610;
   --color-surface: #0d1426;
   --color-surface-2: #111827;
@@ -194,6 +197,124 @@ body {
     radial-gradient(ellipse 80% 60% at 50% -20%, rgba(10, 36, 99, 0.8) 0%, transparent 70%),
     radial-gradient(ellipse 40% 40% at 80% 30%, rgba(62, 146, 204, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 20% 70%, rgba(212, 175, 55, 0.06) 0%, transparent 60%);
+}
+
+/* ─── Crimson glassmorphism ─── */
+.glass-crimson {
+  background: rgba(220, 20, 60, 0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(220, 20, 60, 0.2);
+}
+
+/* ─── Crimson gradient text ─── */
+.gradient-text-crimson {
+  background: linear-gradient(135deg, #DC143C 0%, #FF4560 50%, #FF6B6B 80%, #DC143C 100%);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* ─── Crimson glow pulse ─── */
+@keyframes glow-pulse-crimson {
+  0%, 100% { box-shadow: 0 8px 32px rgba(220,20,60,0.4), 0 2px 8px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 8px 52px rgba(220,20,60,0.7), 0 0 90px rgba(220,20,60,0.25), 0 2px 8px rgba(0,0,0,0.4); }
+}
+.glow-pulse-crimson { animation: glow-pulse-crimson 2.5s ease-in-out infinite; }
+
+/* ─── Hero radial — RED ─── */
+.hero-glow-crimson {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(139,0,0,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 30%, rgba(220,20,60,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 70%, rgba(212,175,55,0.06) 0%, transparent 60%);
+}
+
+/* ─── CSS-only shiny text (no JS, high performance) ─── */
+.shiny-gold {
+  background: linear-gradient(100deg, #D4AF37 0%, #D4AF37 35%, #fff8dc 50%, #D4AF37 65%, #D4AF37 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shiny-sweep 3.5s linear infinite;
+}
+@keyframes shiny-sweep {
+  to { background-position: 200% center; }
+}
+
+/* ─── Smooth scroll ─── */
+html { scroll-behavior: smooth; }
+
+/* ─── Premium text animations ─── */
+@keyframes text-shimmer {
+  to { background-position: 200% center; }
+}
+
+.gradient-text-animated {
+  background: linear-gradient(90deg, #D4AF37, #f0c040, #3E92CC, #60aee0, #D4AF37);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* ─── Glow button pulse ─── */
+@keyframes glow-pulse-blue {
+  0%, 100% { box-shadow: 0 8px 32px rgba(62,146,204,0.35), 0 2px 8px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 8px 48px rgba(62,146,204,0.65), 0 0 80px rgba(62,146,204,0.2), 0 2px 8px rgba(0,0,0,0.4); }
+}
+
+@keyframes glow-pulse-gold {
+  0%, 100% { box-shadow: 0 8px 32px rgba(212,175,55,0.35), 0 2px 8px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 8px 48px rgba(212,175,55,0.65), 0 0 80px rgba(212,175,55,0.2), 0 2px 8px rgba(0,0,0,0.4); }
+}
+
+.glow-pulse-blue { animation: glow-pulse-blue 2.5s ease-in-out infinite; }
+.glow-pulse-gold { animation: glow-pulse-gold 2.5s ease-in-out infinite; }
+
+/* ─── Particle float ─── */
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
+  33% { transform: translateY(-15px) scale(1.1); opacity: 0.7; }
+  66% { transform: translateY(5px) scale(0.95); opacity: 0.4; }
+}
+
+/* ─── Aurora background ─── */
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.aurora-bg {
+  background: linear-gradient(-45deg, #060610, #0A1A3F, #060610, #0d1a30, #04060e);
+  background-size: 400% 400%;
+  animation: aurora-shift 20s ease infinite;
+}
+
+/* ─── Card hover lift ─── */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+}
+
+/* ─── Gradient border animated ─── */
+@keyframes border-spin {
+  from { --border-angle: 0deg; }
+  to { --border-angle: 360deg; }
+}
+
+/* ─── Noise overlay ─── */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
 }
 
 /* ─── Table styles ─── */

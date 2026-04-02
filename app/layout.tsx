@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import GlobalBackground from '@/components/layout/GlobalBackground'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,6 +32,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-dark text-slate-100 antialiased">
+        {/* Global red aurora — appears on every page */}
+        <GlobalBackground />
         {children}
       </body>
     </html>

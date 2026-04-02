@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import Image from 'next/image'
 import { Calendar, Tag, Search, ArrowRight, Clock, MapPin } from 'lucide-react'
 import { formatDateShort } from '@/lib/utils'
+import PageHero from '@/components/layout/PageHero'
 
 const allEvents = [
   {
@@ -92,20 +94,18 @@ export default function EventsPage() {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-16 overflow-hidden">
-          <div className="absolute inset-0 hero-glow" />
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <PageHero minHeight="0" className="pt-32 pb-16">
+          <div className="max-w-7xl mx-auto px-6 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                News & <span className="gradient-text-gold">Events</span>
+                News & <span className="gradient-text-crimson">Events</span>
               </h1>
               <p className="text-xl text-slate-400 max-w-2xl mx-auto">
                 Stay connected with everything happening across campus and beyond.
               </p>
             </motion.div>
           </div>
-        </section>
+        </PageHero>
 
         {/* Filters */}
         <section className="sticky top-[60px] z-30 border-b border-white/[0.06] backdrop-blur-xl bg-dark/80">
@@ -157,10 +157,12 @@ export default function EventsPage() {
                     className="glass-card rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/12 transition-all duration-300 hover:translate-y-[-4px] flex flex-col"
                   >
                     <div className="relative h-48 overflow-hidden">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-500"
+                        unoptimized
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent" />
                       <div

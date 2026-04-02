@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
 import { Trophy, Users, BookOpen, Globe, Building2, FlaskConical } from 'lucide-react'
+import SpotlightCard from '@/components/ui/SpotlightCard'
 
 const stats = [
   { icon: Users, value: 24000, suffix: '+', label: 'Enrolled Students', color: '#3E92CC' },
@@ -52,34 +53,48 @@ export default function StatsSection() {
       }} />
 
       <div className="relative max-w-7xl mx-auto">
-        <div className="text-center mb-14">
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           <span className="text-gold text-sm font-semibold uppercase tracking-widest">By the Numbers</span>
           <h2 className="mt-2 text-3xl md:text-4xl font-bold text-white">
             A Legacy of <span className="gradient-text-gold">Excellence</span>
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
           {stats.map(({ icon: Icon, value, suffix, label, color }, i) => (
             <motion.div
               key={label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.88, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              whileHover={{ y: -4 }}
-              className="glass-card rounded-2xl p-6 text-center border border-white/[0.06] hover:border-white/12 transition-all duration-300"
             >
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-4"
-                style={{ background: `${color}18`, border: `1px solid ${color}25` }}
+              <SpotlightCard
+                className="glass-card rounded-2xl border border-white/6 hover:border-white/15 transition-all duration-300 group cursor-default"
+                spotlightColor={`${color}20`}
               >
-                <Icon className="w-5 h-5" style={{ color }} />
-              </div>
-              <div className="text-3xl font-bold text-white mb-1">
-                <CountUp target={value} suffix={suffix} />
-              </div>
-              <div className="text-xs text-slate-400 leading-snug">{label}</div>
+                <motion.div
+                  whileHover={{ y: -4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="p-6 text-center"
+                >
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
+                    style={{ background: `${color}18`, border: `1px solid ${color}25` }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color }} />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">
+                    <CountUp target={value} suffix={suffix} />
+                  </div>
+                  <div className="text-xs text-slate-400 leading-snug">{label}</div>
+                </motion.div>
+              </SpotlightCard>
             </motion.div>
           ))}
         </div>

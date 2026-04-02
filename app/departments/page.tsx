@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CTABanner from '@/components/sections/CTABanner'
 import { Cpu, Beaker, Stethoscope, Scale, PenTool, BarChart3, Globe2, Music, ArrowRight, Users, BookOpen, FlaskConical } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
 
 const departments = [
   {

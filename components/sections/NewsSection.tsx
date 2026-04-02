@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, Calendar, Tag } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SpotlightCard from '@/components/ui/SpotlightCard'
 import { formatDateShort } from '@/lib/utils'
 
 const news = [
@@ -69,7 +70,10 @@ export default function NewsSection() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
               <Link href={`/events#${item.id}`} className="group block h-full">
-                <div className="glass-card rounded-2xl overflow-hidden border border-white/[0.06] group-hover:border-white/12 transition-all duration-300 group-hover:translate-y-[-4px] h-full flex flex-col">
+                <SpotlightCard
+                  className="glass-card rounded-2xl overflow-hidden border border-white/6 group-hover:border-white/12 transition-all duration-300 group-hover:-translate-y-1 h-full flex flex-col"
+                  spotlightColor={`${categoryColors[item.category]}15`}
+                >
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img
@@ -105,7 +109,7 @@ export default function NewsSection() {
                       Read More <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
-                </div>
+                </SpotlightCard>
               </Link>
             </motion.article>
           ))}
