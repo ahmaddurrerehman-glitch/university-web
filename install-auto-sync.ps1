@@ -1,117 +1,95 @@
 # ================================================================
-# INSTALL AUTO-SYNC — Run this ONCE on each PC
+# INSTALL AUTO-SYNC - Run this ONCE on each PC
 # ================================================================
-# This registers auto-sync.ps1 as a Windows startup task.
-# After running this, auto-sync starts automatically every time
-# you log in — no manual steps needed.
+# Sets up auto-sync to run every 5 minutes automatically.
+# Works via Windows Task Scheduler.
 #
 # HOW TO RUN:
-# 1. Right-click this file → "Run with PowerShell"
+# 1. Right-click this file -> "Run with PowerShell"
 # 2. Click "Yes" if Windows asks for permission
 # ================================================================
 
-$taskName    = "CIMS-UniWeb-AutoSync"
-$scriptPath  = "C:\Users\User\OneDrive\Uni Web\university-web\auto-sync.ps1"
-$psExe       = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+$taskName  = "CIMS-UniWeb-AutoSync"
+$script    = "C:\Users\User\OneDrive\Uni Web\university-web\auto-sync.ps1"
+$psExe     = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+$logFile   = "C:\Users\User\AppData\Local\uni-web-sync.log"
 
 Write-Host ""
 Write-Host "=== Installing Auto-Sync for CIMS University Web ===" -ForegroundColor Cyan
 Write-Host ""
 
-# ── Step 1: Verify the sync script exists ────────────────────────
-if (-not (Test-Path $scriptPath)) {
-    Write-Host "ERROR: auto-sync.ps1 not found at:" -ForegroundColor Red
-    Write-Host "  $scriptPath" -ForegroundColor Red
-    Write-Host "Make sure you are running this from the university-web folder." -ForegroundColor Yellow
+if (-not (Test-Path $script)) {
+    Write-Host "ERROR: auto-sync.ps1 not found." -ForegroundColor Red
     Read-Host "Press Enter to close"
     exit 1
 }
-Write-Host "  auto-sync.ps1 found." -ForegroundColor Green
 
-# ── Step 2: Remove old task if exists ────────────────────────────
-$existing = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
-if ($existing) {
-    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-    Write-Host "  Old task removed (will be replaced)." -ForegroundColor White
-}
+# Remove old task if exists
+Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
 
-# ── Step 3: Create the Task Scheduler task ───────────────────────
-Write-Host ""
-Write-Host "Step 1: Registering Windows startup task..." -ForegroundColor Yellow
+# Build the task
+$psArgs  = "-NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`""
+$action  = New-ScheduledTaskAction -Execute $psExe -Argument $psArgs
 
-$action = New-ScheduledTaskAction `
-    -Execute $psExe `
-    -Argument "-WindowStyle Hidden -NonInteractive -ExecutionPolicy Bypass -File `"$scriptPath`""
+# Triggers: at login + repeat every 5 minutes forever
+$atLogin = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+$repeat  = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 5) `
+                                     -Once `
+                                     -At (Get-Date)
+$atLogin.Repetition = $repeat.Repetition
 
-# Trigger: run at logon for this user
-$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
-
-# Settings: run silently, restart if it fails, no time limit
 $settings = New-ScheduledTaskSettingsSet `
     -Hidden `
-    -ExecutionTimeLimit ([TimeSpan]::Zero) `
-    -RestartCount 3 `
-    -RestartInterval (New-TimeSpan -Minutes 1) `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 4) `
+    -DisallowStartIfOnBatteries $false `
+    -StopIfGoingOnBatteries $false `
     -MultipleInstances IgnoreNew
 
-# Run as current user, highest privileges
-$principal = New-ScheduledTaskPrincipal `
-    -UserId $env:USERNAME `
-    -LogonType Interactive `
-    -RunLevel Highest
+# Register
+try {
+    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $atLogin -Settings $settings -Force | Out-Null
+    Write-Host "  Task scheduler: registered '$taskName'" -ForegroundColor Green
+} catch {
+    Write-Host "  Task Scheduler failed: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "  Using Registry fallback instead..." -ForegroundColor Yellow
 
-Register-ScheduledTask `
-    -TaskName $taskName `
-    -Action $action `
-    -Trigger $trigger `
-    -Settings $settings `
-    -Principal $principal `
-    -Description "Auto-syncs CIMS University Web project with GitHub" `
-    -Force | Out-Null
-
-Write-Host "  Task registered: '$taskName'" -ForegroundColor Green
-
-# ── Step 4: Start it right now (don't wait for next login) ───────
-Write-Host ""
-Write-Host "Step 2: Starting auto-sync now..." -ForegroundColor Yellow
-Start-ScheduledTask -TaskName $taskName
-Start-Sleep -Seconds 2
-
-$state = (Get-ScheduledTask -TaskName $taskName).State
-Write-Host "  Task state: $state" -ForegroundColor Green
-
-# ── Step 5: Verify log file appears ──────────────────────────────
-Write-Host ""
-Write-Host "Step 3: Checking sync log..." -ForegroundColor Yellow
-Start-Sleep -Seconds 5
-$logFile = "$env:LOCALAPPDATA\uni-web-sync.log"
-if (Test-Path $logFile) {
-    Write-Host "  Log file created. Auto-sync is working!" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "  Last log entries:" -ForegroundColor White
-    Get-Content $logFile | Select-Object -Last 5 | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
-} else {
-    Write-Host "  Log not created yet (may take a few seconds)." -ForegroundColor Yellow
-    Write-Host "  Check: $logFile" -ForegroundColor White
+    # Fallback: Registry Run key (always works without admin)
+    $regCmd = "powershell -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`""
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "CIMSAutoSync" -Value $regCmd
+    Write-Host "  Registry startup key set." -ForegroundColor Green
 }
 
-# ── Done ─────────────────────────────────────────────────────────
+# Also set Registry Run as backup
+$regCmd = "powershell -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`""
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "CIMSAutoSync" -Value $regCmd
+Write-Host "  Registry backup: set startup key" -ForegroundColor Green
+
+# Run it immediately now
 Write-Host ""
-Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "  AUTO-SYNC INSTALLED SUCCESSFULLY!" -ForegroundColor Green
-Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host "Running sync now..." -ForegroundColor Yellow
+& $psExe -NonInteractive -ExecutionPolicy Bypass -File $script
+Write-Host ""
+
+# Check log
+if (Test-Path $logFile) {
+    Write-Host "Sync log (last 5 lines):" -ForegroundColor White
+    [System.IO.File]::ReadAllLines($logFile) | Select-Object -Last 5 | ForEach-Object {
+        Write-Host "  $_" -ForegroundColor DarkGray
+    }
+}
+
+Write-Host ""
+Write-Host "=============================================" -ForegroundColor Cyan
+Write-Host "  AUTO-SYNC INSTALLED!" -ForegroundColor Green
+Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "What happens now:" -ForegroundColor White
-Write-Host "  * Every time you save a file, it will auto-push to GitHub" -ForegroundColor White
-Write-Host "    (after a 60-second delay to batch your changes)" -ForegroundColor White
-Write-Host "  * Every 2 minutes it checks GitHub for changes from your other PC" -ForegroundColor White
-Write-Host "  * This runs silently in the background — you won't see anything" -ForegroundColor White
+Write-Host "  * Every 5 minutes: auto-commits your changes to GitHub" -ForegroundColor White
+Write-Host "  * Every 5 minutes: pulls updates from your other PC" -ForegroundColor White
+Write-Host "  * Starts automatically when you log into Windows" -ForegroundColor White
 Write-Host ""
-Write-Host "To check sync activity, open this file:" -ForegroundColor Yellow
+Write-Host "Check sync activity at:" -ForegroundColor Yellow
 Write-Host "  $logFile" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "To stop auto-sync:" -ForegroundColor Yellow
-Write-Host "  Open Task Scheduler → find '$taskName' → right-click → Disable" -ForegroundColor White
 Write-Host ""
 Write-Host "IMPORTANT: Run this same script on your OTHER PC too!" -ForegroundColor Yellow
 Write-Host ""
